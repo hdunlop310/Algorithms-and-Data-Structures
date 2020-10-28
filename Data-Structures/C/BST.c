@@ -27,6 +27,44 @@ struct node* insert_node(node *root, int num){
     return root;
 }
 
+struct node* find_minimum(node *root){
+    if(root == NULL)
+        return NULL;
+    else if(root->left != NULL) 
+        return find_minimum(root->left); 
+    return root;
+}
+
+struct node* delete_node(node *root, int num){
+    if(root==NULL){
+        return new_node(num);
+    }
+    if(num<root->data){
+        root->left = delete_node(root->left, num);
+    }else if(num>root->data){
+        root->right = delete_node(root->right, num);
+    }else{
+        if(root->left == NULL && root->right == NULL){
+            free(root);
+            return NULL;
+        }
+        else if(root->left==NULL || root->left==NULL){
+            node *temp_node;
+            if(root->left==NULL)
+                temp_node = root->right;
+            else
+                temp_node = root->left;
+            free(root);
+            return temp_node;
+        }else{
+            struct node *temp_node = find_minimum(root->right);
+            root->data = temp_node->data;
+            root->right = delete_node(root->right, temp_node->data);
+        }
+    }
+     return root;
+}
+
 void inorder(node *root)
 {
     if (root != NULL)
@@ -46,6 +84,10 @@ int main(){
     insert_node(root, 13);
     insert_node(root, 18);
 
+    inorder(root);
+
+    root = delete_node(root, 5);
+    printf("\n");
     inorder(root);
   
     return 0;
